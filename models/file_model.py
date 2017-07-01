@@ -39,3 +39,7 @@ class File():
             obj.name = line.split("-")[0]
             obj.description = line.split("-")[1]
             print("{} \n{}".format(obj.name, obj.description))
+        if "@" in line:
+            obj.arguments.append(line)
+
+        print(obj.arguments)
