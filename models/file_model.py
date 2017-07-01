@@ -22,14 +22,20 @@ class File():
         with open(self.file_name) as fd:
             for line in fd:
                 if '/**' in line:
+                    new_doc = eval("Doc")(full_doc)
                     flag = 1
                 if flag is 1:
+                    File.check_line(new_doc, line)
                     full_doc = full_doc + line
                 if '*/' in line:
-                    new_doc = eval("Doc")(full_doc)
                     self.doc_store.new(new_doc)
                     full_doc = ""
                     flag = 0
-        #create new Doc class per function
-        #store Doc class in self.doc_store
-        pass
+    
+    @staticmethod
+    def check_line(obj, line):
+        line = line.replace("* ","")
+        if "-" in line:
+            obj.name = line.split("-")[0]
+            obj.description = line.split("-")[1]
+            print("{} \n{}".format(obj.name, obj.description))

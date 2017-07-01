@@ -5,4 +5,4 @@ from models.file_model import File
 from models.documentation_model import Doc
 
 test = File("file.c")
-print(test.doc_store.all())
+print(test.doc_store.obj)
