@@ -34,12 +34,14 @@ class File():
     
     @staticmethod
     def check_line(obj, line):
-        line = line.replace("* ","")
+        line = line.strip("* ")
         if "-" in line:
             obj.name = line.split("-")[0]
-            obj.description = line.split("-")[1]
+            obj.description = (line.split("-")[1]).strip()
             print("{} \n{}".format(obj.name, obj.description))
         if "@" in line:
             obj.arguments.append(line)
-
+        if "Return" in line:
+            obj.return_value = line
+            print(obj.return_value)
         print(obj.arguments)
