@@ -1,7 +1,6 @@
 import uuid
 
 class Doc:
-    def __init__(self, full_documentation):
-        self.id = str(uuid.uuid4())
-        self.full = full_documentation
+    def __init__(self, function_id):
+        self.id = function_id
         self.arguments = []
