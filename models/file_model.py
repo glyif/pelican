@@ -59,7 +59,3 @@ class File():
         for element in func.arguments:
             fd.write(element + "\n")
         fd.write(func.return_value + "\n")
-
-    @staticmethod
-    def write_arguments(arguments):
-        pass
