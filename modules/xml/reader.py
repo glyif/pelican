@@ -1,3 +1,5 @@
+#/usr/bin/env python3
+
 from xml.dom.minidom import Element, Text, parse
 from xml.parsers.expat import ExpatError
 from collections import namedtuple
