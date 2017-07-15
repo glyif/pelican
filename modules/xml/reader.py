@@ -16,9 +16,9 @@ class XMLReader:
         try:
             self.dom = parse(fpath).documentElement
         except FileNotFoundError:
-            raise FileNotFoundError('Unable to find XML file: %s' % fpath)
+            raise FileNotFoundError('Unable to find XML file: {:s}'.format(fpath))
         except ExpatError:
-            raise FileExistsError('Unable to read XML file: %s' % fpath)
+            raise FileExistsError('Unable to read XML file: {:s}'.format(fpath))
 
         # Document root element attributes
         self.name = self.dom.tagName
@@ -88,7 +88,7 @@ class XMLReader:
 
         # For unknown tags
         else:
-            raise NotImplementedError('Unsupported tag: <%s>' % tag.tagName)
+            raise NotImplementedError('Unsupported tag: <{:s}>'.format(tag.tagName))
 
     def get_tag(self, tagname):
         try:
