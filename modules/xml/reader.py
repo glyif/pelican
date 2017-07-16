@@ -56,50 +56,53 @@ class XMLReader:
         return dict(tag.attributes.items())
 
     @staticmethod
-    def read_tag(tag):
+    def read_tag(tag, must_text=False):
 
-        # For text tag
+        # Tag is text
         if XMLReader.is_text(tag):
             return TextTag(
-                name = tag.tagName,
-                text = XMLReader.text_in_tag(tag),
-                atts = XMLReader.atts_in_tag(tag)
+                name=tag.tagName,
+                text=XMLReader.text_in_tag(tag),
+                atts=XMLReader.atts_in_tag(tag)
             )
 
-        # For tag containing group of text tags
-        elif XMLReader.is_textgroup(tag):
+        # If tag is not text, but being required
+        if must_text is True:
+            raise ValueError('Tag content must be text: <%s>' % tag.tagName)
+
+        # Tag containing group of text tags
+        if XMLReader.is_textgroup(tag):
 
             # Read sub-tags in tag
             subs = [
                 TextTag(
-                    name = sub.tagName,
-                    text = XMLReader.text_in_tag(sub),
-                    atts = XMLReader.atts_in_tag(sub)
+                    name=sub.tagName,
+                    text=XMLReader.text_in_tag(sub),
+                    atts=XMLReader.atts_in_tag(sub)
                 )
                 for sub in tag.childNodes if isinstance(sub, Element)
             ]
 
             # Return tag including its sub-tags
             return TextGroupTag(
-                name = tag.tagName,
-                tags = subs,
-                atts = XMLReader.atts_in_tag(tag)
+                name=tag.tagName,
+                tags=subs,
+                atts=XMLReader.atts_in_tag(tag)
             )
 
         # For unknown tags
-        else:
-            raise NotImplementedError('Unsupported tag: <{:s}>'.format(tag.tagName))
+        raise NotImplementedError('Unsupported tag: <%s>' % tag.tagName)
 
-    def get_tag(self, tagname):
+    def get_tag(self, tagname, must_text=False):
         try:
             tag = self.dom.getElementsByTagName(tagname)[0]
-            return self.read_tag(tag)  # tag found
+            return self.read_tag(tag, must_text=must_text)  # tag found
         except IndexError:
             return None  # tag not found
 
-    def get_tags(self, tagname):
+    def get_tags(self, tagname, must_text=False):
         tags = self.dom.getElementsByTagName(tagname)
-        return [self.read_tag(tag) for tag in tags]
+        return [self.read_tag(tag, must_text=must_text) for tag in tags]
 
 
 class ReadmeXMLReader(XMLReader):
@@ -108,17 +111,25 @@ class ReadmeXMLReader(XMLReader):
         super(ReadmeXMLReader, self).__init__(fpath)
 
     @property
+    def logo(self):
+        return self.get_tag('logo', must_text=True)
+
+    @property
     def title(self):
-        return self.get_tag('title')
+        return self.get_tag('title', must_text=True)
 
     @property
     def author(self):
-        return self.get_tag('author')
+        return self.get_tag('author', must_text=True)
 
     @property
     def license(self):
-        return self.get_tag('license')
+        return self.get_tag('license', must_text=True)
 
     @property
     def files(self):
         return self.get_tag('files')
+
+    @property
+    def paragraphs(self):
+        return self.get_tags('paragraph', must_text=True)
