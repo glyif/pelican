@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
-import os, sys
+import sys
 from .c import C
 from .js import JavaScript
 from .python import Python
+from helpers import isfile, getext
 from config import C_EXTENSIONS, PYTHON_EXTENSIONS, JAVASCRIPT_EXTENSIONS
 
 MAPPING = {
@@ -24,22 +25,22 @@ ALL_LANGUAGES = list(MAPPING.keys())
 
 def parse(fpath):
     # Check existence
-    if not os.path.isfile(fpath):
-        raise FileNotFoundError('File is not existed: %s' % fpath)
+    if not isfile(fpath):
+        raise FileNotFoundError('File is not existed')
 
     # Get file extension
-    _, ext = os.path.splitext(fpath)
+    ext = getext(fpath)
 
     # Get module
-    cls = None
+    parser = None
     for lang, exts in MAPPING.items():
         if ext in exts:
-            cls = getattr(sys.modules[__name__], lang)
+            parser = getattr(sys.modules[__name__], lang)
             break
 
     # If extension is not found
-    if cls is None:
-        raise ModuleNotFoundError('File extension is not supported: %s' % fpath)
+    if parser is None:
+        raise ModuleNotFoundError('File extension is not supported')
 
     # Parse and return
-    return cls(fpath)
+    return parser(fpath)
