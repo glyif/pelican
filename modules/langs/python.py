@@ -10,7 +10,12 @@ KeyValue = namedtuple('KeyValue', 'key val')
 REGEX = {
 
     # Main regex for parsing Python structure
-    'main': [ ],
+    'main': [
+        re.compile(
+            r'([ \t]*)((class|def)[ \t]+\w+[ \t]*(\([^:]*\))?[ \t]*:)\s+(("{3}|\'{3})(.*?(?="{3}|\'{3}))("{3}|\'{3}))?',
+            flags=re.DOTALL
+        )
+    ],
 
     # Check regex for detecting docstring format being used
     'check': OrderedDict([
@@ -18,28 +23,28 @@ REGEX = {
         # Google format
         (
             'google', [
-                #re.compile()
+                re.compile(r'\s*(Args|Returns|Raises):\s+')
                 ]
         ),
 
         # Epytext format
         (
             'epytext', [
-                #re.compile()
+                re.compile(r'@(param|type|return|rtype|raise)[^@:\n]*:')
                 ]
         ),
 
         # reStructuredText format
         (
             'rest', [
-                #re.compile()
+                re.compile(r':(param|returns|raises)[^:\n]*:')
                 ]
         ),
 
         # Unknown format
         (
             'unknown', [
-                #re.compile()
+                re.compile(r'.+', flags=re.DOTALL)
                 ]
         )
     ]),
@@ -52,27 +57,28 @@ REGEX = {
 
             # Parsing Intro text part
             'intro': [
-                #re.compile()
+                re.compile(r'(.*?(?=Args:|Returns:|Raises:)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Arguments part
             'args': [
-                #re.compile()
+                re.compile(r'(?<=Args:)(.*?(?=Returns:|Raises:)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Returns part
             'returns': [
-                #re.compile()
+                re.compile(r'(?<=Returns:)(.*?(?=Raises:)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Raises part
             'raises': [
-                #re.compile()
+                re.compile(r'(?<=Raises:).*', flags=re.DOTALL)
                 ],
 
             # Parsing key-value pairs if being used in part
             'kval': [
-                #re.compile()
+                re.compile(r'([^:\n]+):(?!/{2})(.*?(?=[^:\n]+:(?!/{2}))|.*)', flags=re.DOTALL),
+                re.compile(r'()(.+)', flags=re.DOTALL)
                 ]
         },
 
@@ -81,27 +87,27 @@ REGEX = {
 
             # Parsing Intro text part
             'intro': [
-                #re.compile()
+                re.compile(r'(.*?(?=:param|:return|:raise)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Arguments part
             'args': [
-                #re.compile()
+                re.compile(r':param(.*?(?=:return|:raise)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Returns part
             'returns': [
-                #re.compile()
+                re.compile(r':return(.*?(?=:raise)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Raises part
             'raises': [
-                #re.compile()
+                re.compile(r':raise.*', flags=re.DOTALL)
                 ],
 
             # Parsing key-value pairs if being used in part
             'kval': [
-                #re.compile()
+                re.compile(r':\w+([^:\n]*):(.*?(?=:\w+[^:\n]*:)|.*)', flags=re.DOTALL)
                 ]
         },
 
@@ -110,27 +116,27 @@ REGEX = {
 
             # Parsing Intro text part
             'intro': [
-                #re.compile()
+                re.compile(r'(.*?(?=@param|@type|@rtype|@return|@raise)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Arguments part
             'args': [
-                #re.compile()
+                re.compile(r'@(?=param|type)(.*?(?=@return|@rtype|@raise)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Returns part
             'returns': [
-                #re.compile()
+                re.compile(r'@(?=return|rtype)(.*?(?=@raise)|.*)', flags=re.DOTALL)
                 ],
 
             # Parsing Raises part
             'raises': [
-                #re.compile()
+                re.compile(r'@(?=raise).*', flags=re.DOTALL)
                 ],
 
             # Parsing key-value pairs if being used in part
             'kval': [
-                #re.compile()
+                re.compile(r'@\w+([^@:\n]*):(.*?(?=@\w+[^@:\n]*:)|.*)', flags=re.DOTALL)
                 ]
         }
     }
