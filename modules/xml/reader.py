@@ -4,8 +4,9 @@ from xml.dom.minidom import Element, Text, parse
 from xml.parsers.expat import ExpatError
 from collections import namedtuple
 
-TextTag = namedtuple('TextTag', 'name text atts')
-TextGroupTag = namedtuple('TextGroupTag', 'name tags atts')
+
+TextTag = namedtuple('TextTag', 'name text atts index')
+TextGroupTag = namedtuple('TextGroupTag', 'name tags atts index')
 
 
 class XMLReader:
@@ -22,17 +23,18 @@ class XMLReader:
 
         # Document root element attributes
         self.name = self.dom.tagName
-        self.atts = self.atts_in_tag(self.dom)
+        self.atts = self.__atts_in_tag(self.dom)
+        self.childs = self.dom.childNodes
 
     @staticmethod
-    def is_text(tag):
+    def __is_text(tag):
         return any([
             len(tag.childNodes) == 0 and tag.firstChild is None,
             len(tag.childNodes) == 1 and isinstance(tag.firstChild, Text)
         ])
 
-    @staticmethod
-    def is_textgroup(tag):
+    @classmethod
+    def __is_textgroup(cls, tag, child_name=None):
         ret = False  # init check result
         subs = tag.childNodes  # load sub-tags
         # Loop through sub-tags
@@ -40,45 +42,57 @@ class XMLReader:
             # Sub-tag found
             if isinstance(sub, Element):
                 # Return False if sub-tag is not text
-                if not XMLReader.is_text(sub):
+                if not cls.__is_text(sub):
                     return False
+                # Return False if sub-tag is not met name required
+                if child_name is not None:
+                    if sub.tagName != child_name:
+                        return False
                 # Mark True if sub-tag is text
                 ret = True
         # Return check result
         return ret
 
     @staticmethod
-    def text_in_tag(tag):
+    def __text_in_tag(tag):
         return '' if tag.firstChild is None else tag.firstChild.data.strip()
 
     @staticmethod
-    def atts_in_tag(tag):
-        return dict(tag.attributes.items())
+    def __atts_in_tag(tag):
+        atts = ((k.strip(), v.strip()) for k, v in tag.attributes.items())
+        return dict(atts)
 
-    @staticmethod
-    def read_tag(tag, must_text=False):
+    def __read_tag(self, tag, tag_type=None, child_name=None):
 
         # Tag is text
-        if XMLReader.is_text(tag):
+        if self.__is_text(tag):
+
+            # Check type if being required
+            if tag_type is TextGroupTag:
+                raise ValueError('Tag must be a group of text tags: <{:s}>'.format(tag.tagName))
+
+            # Return value
             return TextTag(
                 name=tag.tagName,
-                text=XMLReader.text_in_tag(tag),
-                atts=XMLReader.atts_in_tag(tag)
+                text=self.__text_in_tag(tag),
+                atts=self.__atts_in_tag(tag),
+                index=self.childs.index(tag)
             )
 
-        # If tag is not text, but being required
-        if must_text is True:
-            raise ValueError('Tag content must be text: <%s>' % tag.tagName)
-
         # Tag containing group of text tags
-        if XMLReader.is_textgroup(tag):
+        if self.__is_textgroup(tag, child_name):
+
+            # Check type if being required
+            if tag_type is TextTag:
+                raise ValueError('Tag must be a text tag: <{:s}>'.format(tag.tagName))
 
             # Read sub-tags in tag
             subs = [
                 TextTag(
                     name=sub.tagName,
-                    text=XMLReader.text_in_tag(sub),
-                    atts=XMLReader.atts_in_tag(sub)
+                    text=self.__text_in_tag(sub),
+                    atts=self.__atts_in_tag(sub),
+                    index=tag.childNodes.index(sub)
                 )
                 for sub in tag.childNodes if isinstance(sub, Element)
             ]
@@ -87,22 +101,42 @@ class XMLReader:
             return TextGroupTag(
                 name=tag.tagName,
                 tags=subs,
-                atts=XMLReader.atts_in_tag(tag)
+                atts=self.__atts_in_tag(tag),
+                index=self.childs.index(tag)
             )
 
         # For unknown tags
-        raise NotImplementedError('Unsupported tag: <%s>' % tag.tagName)
+        raise NotImplementedError('Unsupported tag: <{:s}>'.format(tag.tagName))
 
-    def get_tag(self, tagname, must_text=False):
+    def get_tag(self, tagname, tag_type=None, child_name=None):
+        """
+        Get content of a single tag, that single tag could be text tag or a
+        group of text tags
+
+        :param tagname:     Name of tag to get
+        :param tag_type:    Require returned tag must be a specific type
+        :param child_name:  Name of sub-tag must be met if tag is a group
+        :return:            (TextTag | TextGroupTag | None)
+        """
+
         try:
             tag = self.dom.getElementsByTagName(tagname)[0]
-            return self.read_tag(tag, must_text=must_text)  # tag found
+            return self.__read_tag(tag, tag_type=tag_type, child_name=child_name)  # tag found
         except IndexError:
             return None  # tag not found
 
-    def get_tags(self, tagname, must_text=False):
+    def get_tags(self, tagname, tag_type=None, child_name=None):
+        """
+        Get contents of all tags with same tagname being specified
+
+        :param tagname:     Name of tags would like to get
+        :param tag_type:    Require returned tag must be a specific type
+        :param child_name:  Name of sub-tag must be met if tag is a group
+        :return:            (list of TextTag | TextGroupTag, or empty list)
+        """
+
         tags = self.dom.getElementsByTagName(tagname)
-        return [self.read_tag(tag, must_text=must_text) for tag in tags]
+        return [self.__read_tag(tag, tag_type=tag_type, child_name=child_name) for tag in tags]
 
 
 class ReadmeXMLReader(XMLReader):
@@ -112,24 +146,24 @@ class ReadmeXMLReader(XMLReader):
 
     @property
     def logo(self):
-        return self.get_tag('logo', must_text=True)
+        return self.get_tag('logo', tag_type=TextTag)
 
     @property
     def title(self):
-        return self.get_tag('title', must_text=True)
+        return self.get_tag('title', tag_type=TextTag)
 
     @property
     def author(self):
-        return self.get_tag('author', must_text=True)
+        return self.get_tag('author', tag_type=TextTag)
 
     @property
     def license(self):
-        return self.get_tag('license', must_text=True)
+        return self.get_tag('license', tag_type=TextTag)
 
     @property
     def files(self):
-        return self.get_tag('files')
+        return self.get_tag('files', tag_type=TextGroupTag, child_name='file')
 
     @property
     def paragraphs(self):
-        return self.get_tags('paragraph', must_text=True)
+        return self.get_tags('paragraph', tag_type=TextTag)
