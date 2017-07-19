@@ -7,6 +7,8 @@ from .python import Python
 from helpers import isfile, getext
 from config import C_EXTENSIONS, PYTHON_EXTENSIONS, JAVASCRIPT_EXTENSIONS
 
+__all__ = ['parse', 'ALL_LANGUAGES']
+
 MAPPING = {
 
     # Python file extensions

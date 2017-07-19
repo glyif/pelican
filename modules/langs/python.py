@@ -5,6 +5,8 @@ from collections import OrderedDict, namedtuple
 from helpers import readfile, find_matches, getext
 from config import PYTHON_EXTENSIONS
 
+__all__ = ['Python']
+
 KeyValue = namedtuple('KeyValue', 'key val')
 
 REGEX = {

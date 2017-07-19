@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
-
 import sys
 from config import *
 from .decors import *
 from ..langs import *
 from ..xml import ReadmeXMLReader
-from functools import partial
 from helpers import writefile, allfiles, pathprep
+from functools import partial
+
+__all__ = ['MDGen']
+
+PARTSEP = '\n\n'
 
 
 class MDGen:
@@ -31,17 +34,12 @@ class MDGen:
         if any_ext is True and parser is parse:
             # General parser does not work with any file extensions
             raise ValueError('Any file extensions requires specifying a specific language')
-
-        if parser is parse:
-            self.parser = parser
-        else:
-            self.parser = partial(parser, any_ext=any_ext)
+        self.parser = parser if parser is parse else partial(parser, any_ext=any_ext)
 
         # Other properties
         self.parts = {}
         self.pool = []
         self.content = ''
-        self.lang = language.lower()
         self.mdfile = outfile
         self.wdir = workdir
         self.order = 0
@@ -77,15 +75,15 @@ class MDGen:
         raise ValueError('Language is not supported: {:s}'.format(lang))
 
     @classmethod
-    def __kv_decor(cls, key, val):
-        sign = '@' if AT_SIGN_BEFORE_PARAM is True else ''
+    def __kv_decor(cls, key, val, isparam=False):
+        sign = '@' if AT_SIGN_BEFORE_PARAM is True and isparam else ''
         val = cls.__merge_lines(val)
         line = '{} {}'.format(md_inline(sign + key), val) if key else val
         return md_bullet(line)
 
     @classmethod
-    def __gen_keyval(cls, pairs, header):
-        txt = '\n'.join(cls.__kv_decor(k, v) for k, v in pairs)
+    def __gen_keyval(cls, pairs, header, isparam=False):
+        txt = '\n'.join(cls.__kv_decor(k, v, isparam) for k, v in pairs)
         return md_paragraph(header, PROTOTYPE_PARTS_HSIZE, txt)
 
     @staticmethod
@@ -155,7 +153,7 @@ class MDGen:
         author = self.defs.author
         hsize = author.atts.get('hsize', DEFAULT_AUTHOR_HSIZE)
         prefix = author.atts.get('prefix', DEFAULT_AUTHOR_PREFIX)
-        suffix = author.atts.get('prefix', DEFAULT_AUTHOR_SUFFIX)
+        suffix = author.atts.get('suffix', DEFAULT_AUTHOR_SUFFIX)
 
         # Generate author content
         text = md_header(
@@ -164,7 +162,7 @@ class MDGen:
                 author.text if author.text else '',
                 ' %s' % suffix if suffix else ''
             ),
-            hsize=hsize
+            size=hsize
         )
 
         # Store author content
@@ -278,7 +276,7 @@ class MDGen:
 
     def __parse(self, fpath, caption, **kwargs):
         # Prepare file path
-        abs_path, rel_path = pathprep(fpath)
+        abs_path, rel_path = pathprep(self.wdir, fpath)
 
         # Check file path
         if abs_path is None:
@@ -303,16 +301,20 @@ class MDGen:
         self.pool.append(md_paragraph(header, hsize, caption))
 
         # Process parsed data
+        lang = parsed.lang
         for node in parsed.nodes.values():
-            self.__parse_node(node)
+            self.__parse_node(node=node, lang=lang)
 
-    def __parse_node(self, node, parent=None):
+        # Output result
+        print('Parsed:', fpath)
+
+    def __parse_node(self, node, lang, parent=None):
         # Generate function prototype
         ptype = node['prototype']
         if parent is not None:
             indent = max(s.count('\t') for s in parent.split('\n')) + 1
             ptype = '%s\n%s%s' % (parent, '\t' * indent, ptype)
-        self.pool.append(md_code(ptype, self.lang))
+        self.pool.append(md_code(ptype, lang))
 
         # Generate function intro
         intro = node['document']['intro']
@@ -323,7 +325,7 @@ class MDGen:
         params = node['document']['args']
         if params is not None:
             self.pool.append(
-                self.__gen_keyval(params, PROTOTYPE_PARAMS_HEADER)
+                self.__gen_keyval(params, PROTOTYPE_PARAMS_HEADER, isparam=True)
             )
 
         # Generate function returns
@@ -344,4 +346,4 @@ class MDGen:
         childs = node['childs']
         if childs:
             for child in childs.values():
-                self.__parse_node(node=child, parent=ptype)
+                self.__parse_node(node=child, lang=lang, parent=ptype)

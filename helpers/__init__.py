@@ -3,6 +3,21 @@
 
 import os, sys, getopt
 
+__all__ = [
+    'readfile',
+    'writefile',
+    'find_matches',
+    'allfiles',
+    'isfile',
+    'isdir',
+    'pathprep',
+    'getext',
+    'readargs',
+    'minpy',
+    'basedir',
+    'joinroot',
+    'dirfound'
+]
 
 def readfile(fpath):
     if not os.path.isfile(fpath):

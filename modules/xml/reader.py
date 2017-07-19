@@ -4,6 +4,12 @@ from xml.dom.minidom import Element, Text, parse
 from xml.parsers.expat import ExpatError
 from collections import namedtuple
 
+__all__ = [
+    'XMLReader',
+    'ReadmeXMLReader',
+    'TextTag',
+    'TextGroupTag'
+]
 
 TextTag = namedtuple('TextTag', 'name text atts index')
 TextGroupTag = namedtuple('TextGroupTag', 'name tags atts index')
