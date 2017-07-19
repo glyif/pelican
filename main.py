@@ -7,7 +7,7 @@ from helpers import readargs, minpy, joinroot, isfile, isdir, dirfound
 from config import DEFAULT_WORKING_DIR, DEFAULT_OUTPUT_FILE, DEFAULT_XML_FILE
 
 # Define program run command
-PROGRAM_RUN_COMMAND = 'mdgen'
+PROGRAM_RUN_COMMAND = 'pelican'
 
 # Minimum version of Python required
 MINIMUM_PYTHON_REQUIRED = '3.4'
