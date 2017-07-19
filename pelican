@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+pycmd=$(which python3)
+progdir=`dirname $0`
+
+${pycmd} ${progdir}/main.py $*
