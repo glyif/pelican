@@ -2,6 +2,7 @@
 
 
 import os, sys, getopt
+import subprocess as sp
 
 __all__ = [
     'readfile',
@@ -16,7 +17,8 @@ __all__ = [
     'minpy',
     'basedir',
     'joinroot',
-    'dirfound'
+    'dirfound',
+    'whoami'
 ]
 
 def readfile(fpath):
@@ -166,3 +168,8 @@ def joinroot(root, path):
 def dirfound(path, path_is_file=False):
     """Check existence of folder if path is folder, parent folder if path is file"""
     return os.path.isdir(os.path.dirname(path) if path_is_file else path)
+
+def whoami():
+    """Run and return whoami value from the shell"""
+    ret = sp.run('whoami', stdout=sp.PIPE, stderr=sp.DEVNULL)
+    return ret.stdout.decode().strip() if ret.returncode == 0 else ''
