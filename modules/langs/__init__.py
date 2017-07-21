@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 
+from .base import ALL_LANGUAGES, KeyValue
 from .c import C
 from .js import JavaScript
-from .python import Python
 from .parser import parse
-from .base import ALL_LANGUAGES, KeyValue
+from .python import Python
 
 __all__ = [
     'C',

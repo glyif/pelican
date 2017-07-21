@@ -2,11 +2,9 @@
 
 
 import sys
-from .c import C
-from .js import JavaScript
-from .python import Python
-from .base import LANGUAGE_EXTENSIONS
+
 from helpers import isfile, getext
+from .base import LANGUAGE_EXTENSIONS
 
 __all__ = ['parse']
 

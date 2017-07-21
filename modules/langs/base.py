@@ -2,8 +2,9 @@
 
 
 from collections import namedtuple, OrderedDict
-from helpers import readfile, find_matches, getext
+
 from config import C_EXTENSIONS, PYTHON_EXTENSIONS, JAVASCRIPT_EXTENSIONS
+from helpers import readfile, find_matches, getext
 
 __all__ = [
     'KeyValue',

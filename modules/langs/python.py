@@ -2,6 +2,7 @@
 
 import re
 from collections import OrderedDict
+
 from helpers import count_indent
 from .base import Base
 
@@ -147,6 +148,7 @@ class Python(Base):
     """
     Python language file parser
     """
+
     def __init__(self, fpath, any_ext=False):
         """
         Initialize Python object

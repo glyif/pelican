@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 
-import os, sys, getopt
+import getopt
+import os
 import subprocess as sp
+import sys
 
 __all__ = [
     'readfile',
@@ -21,6 +23,7 @@ __all__ = [
     'whoami',
     'count_indent'
 ]
+
 
 def readfile(fpath):
     if not os.path.isfile(fpath):
@@ -172,10 +175,12 @@ def dirfound(path, path_is_file=False):
     """Check existence of folder if path is folder, parent folder if path is file"""
     return os.path.isdir(os.path.dirname(path) if path_is_file else path)
 
+
 def whoami():
     """Run and return whoami value from the shell"""
     ret = sp.run('whoami', stdout=sp.PIPE, stderr=sp.DEVNULL)
     return ret.stdout.decode().strip() if ret.returncode == 0 else ''
+
 
 def count_indent(indent, tab_to_spaces=0):
     """Counting number of indents used, both spaces and tab are supported"""

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import sys
+from functools import partial
+
 from config import *
+from helpers import writefile, allfiles, pathprep, basedir, whoami
 from .decors import *
 from ..langs import *
 from ..xml import ReadmeXMLReader
-from helpers import writefile, allfiles, pathprep, basedir, whoami
-from functools import partial
 
 __all__ = ['MDGen']
 

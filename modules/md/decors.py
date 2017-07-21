@@ -138,6 +138,7 @@ def md_paragraph(header, hsize, text):
         text if text else ''
     )
 
+
 def md_escape(word):
     """
     wrapper for escaped characters
@@ -150,5 +151,5 @@ def md_escape(word):
             p = c * l
             if word.startswith(p) and word.endswith(p):
                 e = '\%s' % c * l
-                return '{e}{w}{e}'.format(e=e, w=word[l:len(word)-l])
+                return '{e}{w}{e}'.format(e=e, w=word[l:len(word) - l])
     return word

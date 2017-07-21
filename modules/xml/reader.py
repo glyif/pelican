@@ -1,8 +1,8 @@
-#/usr/bin/env python3
+# /usr/bin/env python3
 
+from collections import namedtuple
 from xml.dom.minidom import Element, Text, parse
 from xml.parsers.expat import ExpatError
-from collections import namedtuple
 
 __all__ = [
     'XMLReader',
@@ -259,5 +259,5 @@ class ReadmeXMLReader(XMLReader):
 
         :return: paragraph tag
         """
-        
+
         return self.get_tags('paragraph', tag_type=TextTag)
