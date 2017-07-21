@@ -1,0 +1,161 @@
+<!--
+Please note that the order of tag elements in this document
+will be kept the same as their appearances while being parsed.
+-->
+<readme>
+
+    <!--
+    Tag name:
+        <logo>
+
+    Tag type:
+        Single use tag
+        (only the first apperance takes effect)
+
+    Attributes:
+        src:       Link to the image which is used for logo
+
+        alt:       Alternate text for image
+    -->
+    <logo src="link/to/your/image.png" alt="Alt Text"></logo>
+
+    <!--
+    Tag name:
+        <title>
+
+    Tag type:
+        Single use tag
+
+    Attributes:
+        hsize:     Header size format for title text,
+                   value from "h1" to "h6'
+    -->
+    <title hsize="h1..h6">
+        Your Document Title
+    </title>
+
+    <!--
+    Tag name:
+        <author>
+
+    Tag type:
+        Single use tag
+
+    Attributes:
+        hsize:     Header size format for author text,
+                   value from "h1" to "h6'
+
+        prefix:    Text will be prepended to "Author name",
+                   space separation is automatically added
+
+        suffix:    Text will be appended to "Author name",
+                   space separation is automatically added
+    -->
+    <author hsize="h1..h6" prefix="Author:" suffix="(Description)">
+        Author name
+    </author>
+
+    <!--
+    Tag name:
+        <paragraph>
+
+    Tag type:
+        Multiple use tag
+        (can appear many times, at first level, in document)
+
+    Attributes:
+        header:    Text header (or title) for paragraph
+
+        hsize:     Header size format for paragraph header,
+                   value from "h1" to "h6'
+    -->
+    <paragraph header="Paragraph Header" hsize="h1..h6">
+        You can type any text information in this paragraph block. All the
+        Markdown (md) decorators can be use inside here in order to markup
+        your text, they will be keep as-is while being parsed.
+    </paragraph>
+
+    <!--
+    Tag name:
+        <files> (word in plural)
+
+    Tag type:
+        Single use tag
+
+    Attributes:
+        header:           General header for all scanned files block
+
+        hsize:            Header size for General header
+
+        fpath_hsize:      Header size for file path displayed at the
+                          beginning of each file node
+
+        fpath_order:      Prepend order number automatically in front
+                          of file path text for each file node
+    -->
+    <files header="File Breakdown" hsize="h1..h6" fpath_hsize="h1..h6" fpath_order="yes">
+        <!--
+        Tag name:
+            <file> (word in singular)
+
+        Tag type:
+            Multiple use tag
+            (only inside <files> tag)
+
+        Attributes:
+            path:    Specify path to the file that you want to scan,
+                     or "*" to scan all files in current directory
+        -->
+
+        <!--
+        Sample of manual-add file tag with caption text
+
+        If an exact path of a file is specified in attribute path, that file
+        will be scanned for its prototypes and documents.
+        -->
+        <file path="path/to/your_1st_file_name.ext">
+            Caption text goes here if any, will be displayed at the beginning
+            of each file. Markdown (md) decorators can be used also.
+        </file>
+
+        <!--More manual-add file tags without caption text-->
+        <file path="path/to/your_2nd_file_name.ext"></file>
+        <file path="path/to/your_3rd_file_name.ext"></file>
+
+        <!--
+        Sample of auto-scan file tag with caption text
+
+        If attribute path is "*", all files in current folder and sub folders
+        will be scanned for their prototypes and documents.
+
+        Attribute path="*" can be co-located with path="path/to/your_file"
+        without any restriction, you should be awared what you are doing in
+        order to get a correct generated document as your expectation.
+        -->
+        <file path="*">
+            Caption text here will be displayed for every file scanned if being
+            used.
+        </file>
+
+    </files>
+
+    <!--
+    Tag name:
+        <license>
+
+    Tag type:
+        Single use tag
+
+    Attributes:
+        header:    Header text for license block
+
+        hsize:     Header size for header text being used
+
+        type:      Text will be printed out as license type,
+                   it will be displayed right below the header
+    -->
+    <license header="License" hsize="h1..h6" type="MIT">
+        More descriptions of your license go here if any
+    </license>
+
+</readme>
