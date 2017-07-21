@@ -2,9 +2,10 @@
 
 
 import sys
-from modules.md import MDGen
-from helpers import readargs, minpy, joinroot, isfile, isdir, dirfound
+
 from config import DEFAULT_WORKING_DIR, DEFAULT_OUTPUT_FILE, DEFAULT_XML_FILE
+from helpers import readargs, minpy, joinroot, isfile, isdir, dirfound
+from modules.md import MDGen
 
 # Define program run command
 PROGRAM_RUN_COMMAND = 'pelican'
