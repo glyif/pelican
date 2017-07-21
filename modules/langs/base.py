@@ -30,8 +30,18 @@ ALL_LANGUAGES = list(LANGUAGE_EXTENSIONS.keys())
 
 
 class Base:
+    """
+    Base parser for all languages
+    """
 
     def __init__(self, fpath, lang, regex, any_ext=False):
+        """
+
+        :param fpath:
+        :param lang:
+        :param regex:
+        :param any_ext:
+        """
         # Check lang input
         if lang not in LANGUAGE_EXTENSIONS:
             raise ValueError('Unrecognized input language "{:s}"'.format(lang))

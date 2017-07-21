@@ -3,4 +3,7 @@
 __all__ = ['JavaScript']
 
 class JavaScript:
+    """
+    Javascript language file parser
+    """
     pass

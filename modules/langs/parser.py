@@ -12,6 +12,12 @@ __all__ = ['parse']
 
 
 def parse(fpath):
+    """
+    Routes what parser to use depending on the file extension of a file
+
+    :param fpath: file path of file
+    :return: none
+    """
     # Check existence
     if not isfile(fpath):
         raise FileNotFoundError('File is not existed')

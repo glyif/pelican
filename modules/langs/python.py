@@ -144,8 +144,16 @@ REGEX = {
 
 
 class Python(Base):
-
+    """
+    Python language file parser
+    """
     def __init__(self, fpath, any_ext=False):
+        """
+        Initialize Python object
+
+        :param fpath: file path
+        :param any_ext: True means Parse source code files for any file extensions
+        """
         self.typemap = {'class': 'Class', 'def': 'Function'}
         super(Python, self).__init__(
             fpath=fpath,
@@ -155,6 +163,11 @@ class Python(Base):
         )
 
     def parse(self):
+        """
+        Parse python file and create nodes with documentation info
+
+        :return: none
+        """
         previous = None
         cur_parents = []
         cur_indents = []

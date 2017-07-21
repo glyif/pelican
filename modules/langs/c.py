@@ -3,4 +3,7 @@
 __all__ = ['C']
 
 class C:
+    """
+    C language file parser
+    """
     pass
