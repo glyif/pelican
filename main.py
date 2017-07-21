@@ -58,7 +58,7 @@ def main():
     if isfile(out):
         print('Output file is existed:', out)
         confirm = input('Do you want to overwrite? (type Y to confirm, any key to exit): ')
-        if confirm != 'Y':
+        if confirm != 'Y' and confirm != 'y':
             sys.exit()
 
     # Make sure output file is not a dir

@@ -3,8 +3,9 @@
 
 from .c import C
 from .js import JavaScript
-from .python import Python, KeyValue
-from .parser import parse, ALL_LANGUAGES
+from .python import Python
+from .parser import parse
+from .base import ALL_LANGUAGES, KeyValue
 
 __all__ = [
     'C',

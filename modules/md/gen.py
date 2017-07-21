@@ -5,7 +5,7 @@ from config import *
 from .decors import *
 from ..langs import *
 from ..xml import ReadmeXMLReader
-from helpers import writefile, allfiles, pathprep
+from helpers import writefile, allfiles, pathprep, basedir, whoami
 from functools import partial
 
 __all__ = ['MDGen']
@@ -138,7 +138,10 @@ class MDGen:
         hsize = title.atts.get('hsize', DEFAULT_TITLE_HSIZE)
 
         # Generate title content
-        text = md_header(text=title.text, size=hsize)
+        text = md_header(
+            text='{}'.format(title.text if title.text else basedir(self.wdir)),
+            size=hsize
+        )
 
         # Store title content
         if text:
@@ -309,6 +312,19 @@ class MDGen:
         print('Parsed:', fpath)
 
     def __parse_node(self, node, lang, parent=None):
+        # Generate function name
+        name = node['name']
+        type_ = node['type']
+        self.pool.append(
+            md_header(
+                text='{}{}'.format(
+                    '%s: ' % type_.capitalize() if DISPLAY_TYPE_BEFORE_PROTOTYPE_NAME is True else '',
+                    md_escape(name)
+                ),
+                size=DEFAULT_PROTOTYPE_SECTION_HSIZE
+            )
+        )
+
         # Generate function prototype
         ptype = node['prototype']
         if parent is not None:

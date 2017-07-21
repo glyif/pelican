@@ -67,6 +67,13 @@ USE_NUM_BEFORE_FILEPATH = True
 # Whether to skip ".folder" or ".file" while scanning
 SKIP_LEADING_DOT_ITEMS_IN_FOLDER = True
 
+# Default header size for the prototype name of parsed prototype section
+DEFAULT_PROTOTYPE_SECTION_HSIZE = 'h5'
+
+# Whether or not to display the type before prototype name
+# Example: "Function: function_name"
+DISPLAY_TYPE_BEFORE_PROTOTYPE_NAME = True
+
 # Header for "Params" block inside function prototype
 PROTOTYPE_PARAMS_HEADER = 'Params'
 

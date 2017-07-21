@@ -11,7 +11,8 @@ __all__ = [
     'md_quote',
     'md_bold',
     'md_italic',
-    'md_paragraph'
+    'md_paragraph',
+    'md_escape'
 ]
 
 
@@ -60,3 +61,12 @@ def md_paragraph(header, hsize, text):
         '%s\n' % md_header(header, hsize) if header else '',
         text if text else ''
     )
+
+def md_escape(word):
+    for c in '_*`':
+        for l in [3, 2, 1]:
+            p = c * l
+            if word.startswith(p) and word.endswith(p):
+                e = '\%s' % c * l
+                return '{e}{w}{e}'.format(e=e, w=word[l:len(word)-l])
+    return word

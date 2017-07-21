@@ -15,5 +15,6 @@ __all__ = [
     'md_italic',
     'md_bold',
     'md_paragraph',
+    'md_escape',
     'MDGen'
 ]

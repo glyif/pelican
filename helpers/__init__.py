@@ -18,7 +18,8 @@ __all__ = [
     'basedir',
     'joinroot',
     'dirfound',
-    'whoami'
+    'whoami',
+    'count_indent'
 ]
 
 def readfile(fpath):
@@ -80,25 +81,27 @@ def isdir(path):
 
 
 def pathprep(root, path):
-    """Prepare absolute and relative path for input path
-    based on root path"""
+    """Return absolute and relative path for input path based on root"""
+
+    # Get absolute root
+    root = os.path.abspath(root)
 
     # Path is absolute
     if os.path.isabs(path):
-        pref = os.path.abspath(root)
-
-        # Path is related with root
-        if path.startswith(pref):
-            pos = 1 if pref == '/' else len(pref) + 1
-            return path, path[pos:]
-
         # Path is not related with root
-        else:
+        if not path.startswith(root):
             return None, None
 
     # Path is relative
     else:
-        return os.path.join(root, path), path
+        # Get absolute path
+        path = os.path.abspath(os.path.join(root, path))
+
+    # Find ending position of root
+    pos = 1 if root == '/' else len(root) + 1
+
+    # Return absolute and relative of path
+    return path, path[pos:]
 
 
 def getext(fpath):
@@ -173,3 +176,30 @@ def whoami():
     """Run and return whoami value from the shell"""
     ret = sp.run('whoami', stdout=sp.PIPE, stderr=sp.DEVNULL)
     return ret.stdout.decode().strip() if ret.returncode == 0 else ''
+
+def count_indent(indent, tab_to_spaces=0):
+    """Counting number of indents used, both spaces and tab are supported"""
+
+    # No indent
+    if indent == '':
+        return 0
+
+    # Inconsistent indent
+    if len(set(indent)) > 1:
+        raise ValueError('Inconsistent indents found')
+
+    # Indent is space
+    if ' ' in indent:
+        if tab_to_spaces:
+            if len(indent) % tab_to_spaces != 0:
+                raise ValueError('Number of spaces is not a multiple of %s' % tab_to_spaces)
+            return int(len(indent) / tab_to_spaces)
+        raise ValueError('Spaces are not allowed for indent use')
+
+    # Indent is tab
+    elif '\t' in indent:
+        return len(indent)
+
+    # Unsupported indent
+    else:
+        raise ValueError('Unsupported indent')
