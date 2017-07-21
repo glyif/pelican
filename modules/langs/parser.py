@@ -24,7 +24,6 @@ def parse(fpath):
     for lang, exts in LANGUAGE_EXTENSIONS.items():
         if ext in exts:
             parser = getattr(sys.modules[__name__], lang)
-            print(parser.__dict__)
             break
 
     # If extension is not found
