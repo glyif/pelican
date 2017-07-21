@@ -5,7 +5,9 @@
 ## General
 This program is used to parse documents from source code files and write output content into a MarkDown format file
 
-[![Build Status](https://travis-ci.org/glyif/pelican.svg?branch=master)](https://travis-ci.org/glyif/pelican)
+Master Build Status: [![Build Status](https://travis-ci.org/glyif/pelican.svg?branch=master)](https://travis-ci.org/glyif/pelican)
+
+Dev Build Status: [![Build Status](https://travis-ci.org/glyif/pelican.svg?branch=dev)](https://travis-ci.org/glyif/pelican)
 
 ## Requirements
 - Python version >= 3.4 with standard libraries installed
