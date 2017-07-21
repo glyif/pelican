@@ -1,14 +1,16 @@
-## Pelican
+# Pelican
 
 **Author:** Bobby Yang
 
-### General
+## General
 This program is used to parse documents from source code files and write output content into a MarkDown format file
 
-### Requirements
+[![Build Status](https://travis-ci.org/glyif/pelican.svg?branch=master)](https://travis-ci.org/glyif/pelican)
+
+## Requirements
 - Python version >= 3.4 with standard libraries installed
 
-### How to use
+## How to use
 Instructions for how to use this program can be found via its help document by running this command (assuming that we are in the main folder of the program, '$' sign is stating a command line prompt):
 
 ```bash
@@ -34,7 +36,9 @@ PARAMS:
 
 If the **PARAMS** is not using, program will use default settings from the config file.
 
-### Examples
+Currently working on compiling into a standalone executable.
+
+## Examples
 
 Run command, write output file to an absolute path at `/home/user/OUTPUT.md`, working directory, input XML file are getting from default settings, programming language will be detected automatically:
 ```bash
@@ -56,7 +60,7 @@ Specify using Python as language parser by param `--lang python`, and instruct t
 $ ./pelican --lang python --anyext
 ```
 
-### Supported languages
+## Supported languages
 - **Python**
 - **JavaScript** *(Not implemented)*
 - **C** *(Not implemented)*
