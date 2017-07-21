@@ -162,7 +162,7 @@ class MDGen:
         text = md_header(
             text='{}{}{}'.format(
                 '%s ' % prefix if prefix else '',
-                author.text if author.text else '',
+                author.text if author.text else whoami(),
                 ' %s' % suffix if suffix else ''
             ),
             size=hsize
