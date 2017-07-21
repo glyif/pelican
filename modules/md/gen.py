@@ -14,6 +14,9 @@ PARTSEP = '\n\n'
 
 
 class MDGen:
+    """
+    Main object that contains all the information about the README
+    """
 
     def __init__(self, infile, outfile, workdir, language=None, any_ext=False):
         """
@@ -52,12 +55,21 @@ class MDGen:
 
     @property
     def next_order(self):
-        """Increase order and return when being called"""
+        """
+        increment order
+        :return: incremented order
+        """
         self.order += 1
         return self.order
 
     @staticmethod
     def __load_parser(lang):
+        """
+        load the correct parser depending on the language of a file
+
+        :param lang: language of the file
+        :return: parser function corresponding with the language
+        """
         # Get current module
         this = sys.modules[__name__]
 
@@ -76,6 +88,15 @@ class MDGen:
 
     @classmethod
     def __kv_decor(cls, key, val, isparam=False):
+        """
+        kval readme doc gen
+
+        :param key: key
+        :param val: value
+        :param isparam: isparam
+        :return: md formatted bullet point for kval
+        """
+
         sign = '@' if AT_SIGN_BEFORE_PARAM is True and isparam else ''
         val = cls.__merge_lines(val)
         line = '{} {}'.format(md_inline(sign + key), val) if key else val
@@ -83,20 +104,43 @@ class MDGen:
 
     @classmethod
     def __gen_keyval(cls, pairs, header, isparam=False):
+        """
+        generate kval
+
+        :param pairs: key value pairs
+        :param header: header of the section
+        :param isparam: param
+        :return: generated text block of kval
+        """
+
         txt = '\n'.join(cls.__kv_decor(k, v, isparam) for k, v in pairs)
         return md_paragraph(header, PROTOTYPE_PARTS_HSIZE, txt)
 
     @staticmethod
     def __merge_lines(text):
+        """
+        join lines of text
+
+        :param text: text to join
+        :return: merged text
+        """
+
         return ' '.join(line.strip() for line in text.split('\n'))
 
     def __textize(self):
-        # Unpack generated parts in order
+        """
+        unpack generated md partials in order
+        """
+
         _, parts = zip(*sorted(self.parts.items()))
         # Store parts in text
         self.content = PARTSEP.join(parts)
 
     def __write_md(self):
+        """
+        writes md to file
+        """
+
         writefile(
             fpath=self.mdfile,
             content=self.content,
@@ -104,6 +148,10 @@ class MDGen:
         )
 
     def __generate(self):
+        """
+        generate static md blocks
+        """
+
         self.__gen_logo()
         self.__gen_title()
         self.__gen_author()
@@ -112,6 +160,12 @@ class MDGen:
         self.__gen_license()
 
     def __gen_logo(self):
+        """
+        generates md logo block
+
+        :return: if there is no logo, then return. else set self property
+        """
+
         # Check availability
         if self.defs.logo is None:
             return
@@ -129,6 +183,12 @@ class MDGen:
             self.parts[logo.index] = text
 
     def __gen_title(self):
+        """
+        generates md title block
+
+        :return: if there is no title, then return. else set self property
+        """
+
         # Check availability
         if self.defs.title is None:
             return
@@ -148,6 +208,12 @@ class MDGen:
             self.parts[title.index] = text
 
     def __gen_author(self):
+        """
+        generates md author block
+
+        :return: if there is no author, then return, else set self property
+        """
+
         # Check availability
         if self.defs.author is None:
             return
@@ -173,6 +239,12 @@ class MDGen:
             self.parts[author.index] = text
 
     def __gen_paragraphs(self):
+        """
+        generate md text blocks
+
+        :return: if there are no text blocks, then return. else set self property
+        """
+
         # Check availability
         if not self.defs.paragraphs:
             return
@@ -192,6 +264,12 @@ class MDGen:
                 self.parts[p.index] = text
 
     def __gen_license(self):
+        """
+        generate md license block
+
+        :return: if there are no license blocks, then return. else set self property
+        """
+
         # Check availability
         if self.defs.license is None:
             return
@@ -217,6 +295,12 @@ class MDGen:
             self.parts[lic.index] = text
 
     def __gen_files(self):
+        """
+        generate md documenation of source code files
+
+        :return: if no file blocks, then return. else set self property
+        """
+
         # Check availability
         if self.defs.files is None:
             return
@@ -250,6 +334,13 @@ class MDGen:
             self.parts[files.index] = PARTSEP.join(self.pool)
 
     def __gen_a_file(self, tag, **kwargs):
+        """
+        generates a md block for a file
+
+        :param tag:
+        :param kwargs:
+        :return:
+        """
         caption = tag.text
         fpath = tag.atts.get('path', '')
 
@@ -266,6 +357,14 @@ class MDGen:
             self.__parse(fpath=fpath, caption=caption, **kwargs)
 
     def __scan(self, caption, **kwargs):
+        """
+        scan a codebase
+
+        :param caption: caption to pass into __parse function
+        :param kwargs: dict of file header size and file order
+        :return: return if already scanned, else scan and parse and set scanned property to True
+        """
+
         # Quit if already scanned
         if self.scanned is True:
             return
@@ -278,6 +377,14 @@ class MDGen:
         self.scanned = True
 
     def __parse(self, fpath, caption, **kwargs):
+        """
+        parses a file
+
+        :param fpath: path of file
+        :param caption: caption text for file
+        :param kwargs: dict of file header size and file order
+        :return: return if error
+        """
         # Prepare file path
         abs_path, rel_path = pathprep(self.wdir, fpath)
 
@@ -312,6 +419,15 @@ class MDGen:
         print('Parsed:', fpath)
 
     def __parse_node(self, node, lang, parent=None):
+        """
+        parses a node and generates md for a file
+
+        :param node: node
+        :param lang: language of the file
+        :param parent: parent of the node
+        :return: none
+        """
+
         # Generate function name
         name = node['name']
         type_ = node['type']
@@ -358,7 +474,7 @@ class MDGen:
                 self.__gen_keyval(raises, PROTOTYPE_RAISES_HEADER)
             )
 
-        # Generate child nodes if any
+        # Recursively generate child nodes if any
         childs = node['childs']
         if childs:
             for child in childs.values():
