@@ -16,8 +16,16 @@ TextGroupTag = namedtuple('TextGroupTag', 'name tags atts index')
 
 
 class XMLReader:
+    """
+    Object that parses the xml file and gives instructions for the MDGen
+    """
 
     def __init__(self, fpath):
+        """
+        Initialize XMLReader Object
+
+        :param fpath: file path of xml file
+        """
 
         # Parse XML
         try:
@@ -34,6 +42,12 @@ class XMLReader:
 
     @staticmethod
     def __is_text(tag):
+        """
+        checks if there is text inside a tag
+
+        :param tag: xml tag
+        :return: 0 if no text, 1 if there is text
+        """
         return any([
             len(tag.childNodes) == 0 and tag.firstChild is None,
             len(tag.childNodes) == 1 and isinstance(tag.firstChild, Text)
@@ -41,8 +55,17 @@ class XMLReader:
 
     @classmethod
     def __is_textgroup(cls, tag, child_name=None):
-        ret = False  # init check result
-        subs = tag.childNodes  # load sub-tags
+        """
+        checks if there is a text group inside of a tag
+        :param tag: xml tag
+        :param child_name: name of child
+        :return: True or False
+        """
+
+        # init check result
+        ret = False
+        # load sub-tags
+        subs = tag.childNodes
         # Loop through sub-tags
         for sub in subs:
             # Sub-tag found
@@ -61,14 +84,33 @@ class XMLReader:
 
     @staticmethod
     def __text_in_tag(tag):
+        """
+        grabs text in tab
+        :param tag: xml tag
+        :return: returns data in xml tag
+        """
         return '' if tag.firstChild is None else tag.firstChild.data.strip()
 
     @staticmethod
     def __atts_in_tag(tag):
+        """
+        grabs for attributes in a tag
+
+        :param tag: xml tag
+        :return: returns a dictionary of atrributes in the xml tag
+        """
         atts = ((k.strip(), v.strip()) for k, v in tag.attributes.items())
         return dict(atts)
 
     def __read_tag(self, tag, tag_type=None, child_name=None):
+        """
+        grabs all data from an xml tag
+
+        :param tag: xml tag to grab data from
+        :param tag_type: type of xml tag
+        :param child_name: name of child
+        :return: new TextTag or TextGroupTag tuple
+        """
 
         # Tag is text
         if self.__is_text(tag):
@@ -146,30 +188,76 @@ class XMLReader:
 
 
 class ReadmeXMLReader(XMLReader):
+    """
+    Pelican README gen class - inherits from XMLReader class
+    """
 
     def __init__(self, fpath):
+        """
+        Initializes ReadmeXMLReader object
+
+        :param fpath: path to xml
+        """
+
+        # uses the XMLReader __jnit__ passing in the fpath
         super(ReadmeXMLReader, self).__init__(fpath)
 
     @property
     def logo(self):
+        """
+        gets logo tag
+
+        :return: logo tag
+        """
+
         return self.get_tag('logo', tag_type=TextTag)
 
     @property
     def title(self):
+        """
+        gets title tag
+
+        :return: title tag
+        """
+
         return self.get_tag('title', tag_type=TextTag)
 
     @property
     def author(self):
+        """
+        gets author tag
+
+        :return: author tag
+        """
+
         return self.get_tag('author', tag_type=TextTag)
 
     @property
     def license(self):
+        """
+        gets license tag
+
+        :return: license tag
+        """
+
         return self.get_tag('license', tag_type=TextTag)
 
     @property
     def files(self):
+        """
+        gets file tag
+
+        :return: file tag
+        """
+
         return self.get_tag('files', tag_type=TextGroupTag, child_name='file')
 
     @property
     def paragraphs(self):
+        """
+        gets paragraph tag
+
+        :return: paragraph tag
+        """
+        
         return self.get_tags('paragraph', tag_type=TextTag)
