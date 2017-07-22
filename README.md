@@ -64,5 +64,5 @@ $ ./pelican --lang python --anyext
 
 ## Supported languages
 - **Python**
+- **C**
 - **JavaScript** *(Not implemented)*
-- **C** *(Not implemented)*

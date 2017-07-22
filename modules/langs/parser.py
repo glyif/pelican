@@ -2,7 +2,8 @@
 
 
 import sys
-
+from .c import C
+from .python import Python
 from helpers import isfile, getext
 from .base import LANGUAGE_EXTENSIONS
 
