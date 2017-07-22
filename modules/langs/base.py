@@ -37,11 +37,12 @@ class Base:
 
     def __init__(self, fpath, lang, regex, any_ext=False):
         """
+        Initializes Base object
 
-        :param fpath:
-        :param lang:
-        :param regex:
-        :param any_ext:
+        :param fpath: file path of file
+        :param lang: language of file
+        :param regex: regex statments to parse
+        :param any_ext: True means Parse source code files for any file extensions
         """
         # Check lang input
         if lang not in LANGUAGE_EXTENSIONS:
@@ -69,6 +70,16 @@ class Base:
             self.parse()
 
     def __gen_node(self, name, type_, prototype, docstring):
+        """
+        generates a node
+
+        :param name: name of the documentation (function/struct/class/etc)
+        :param type_: type of documentation (function/struct/class/etc)
+        :param prototype: prototype
+        :param docstring: documentation
+        :return:
+        """
+
         return {
             'name': name,
             'type': type_,
@@ -79,6 +90,15 @@ class Base:
 
     @staticmethod
     def __doc_extract(docstring, patterns, kval=None):
+        """
+        extracts parts of docstring with regex
+
+        :param docstring: full docsstring
+        :param patterns: regex pattern
+        :param kval: key and value pair
+        :return: needed docstring text for __parse_doc
+        """
+
         matched = find_matches(docstring, patterns)
         if matched and matched[0].strip() != '':
             ret = matched[0].strip()
@@ -93,6 +113,13 @@ class Base:
         return None
 
     def __parse_doc(self, docstring):
+        """
+        parses docstring out into dictionary
+
+        :param docstring: full docstring
+        :return: parsed docstring in dictionary format
+        """
+
         # Init doc structure
         ret = {
             'intro': None,
@@ -122,15 +149,44 @@ class Base:
         return ret
 
     def __get_childs(self, childs, index):
+        """
+        get childs of a node
+
+        :param childs: child
+        :param index: index of child
+        :return: child or None
+        """
         return self.nodes[index]['childs'] if childs is None else childs[index]['childs']
 
     def __store_child(self, index, node, parents):
+        """
+        stores node as a child
+
+        :param index: index of child
+        :param node: node to add as child
+        :param parents: parts of the child node
+        :return: none
+        """
+
         childs = None
         for parent in parents:
             childs = self.__get_childs(childs, parent)
         childs[index] = node
 
     def add_node(self, index, name, type_, prototype, docstring, ischild=False, parent_list=None):
+        """
+        adds a doc node
+
+        :param index: index of node
+        :param name: name of the function/struct/class/etc
+        :param type_: type: function/struct/class/etc
+        :param prototype: prototype of the function/struct/class/etc
+        :param docstring: full docstring
+        :param ischild: True if it is a child, default is false
+        :param parent_list: parents of the node
+
+        :return: none
+        """
         if ischild and not parent_list:
             raise ValueError('"parent_list" is required to store child node')
         node = self.__gen_node(name=name, type_=type_, prototype=prototype, docstring=docstring)
@@ -140,4 +196,10 @@ class Base:
             self.nodes[index] = node
 
     def parse(self):
+        """
+        empty parse function, will be overwritten by inherited parsers
+
+        :return: none
+        """
+
         pass
