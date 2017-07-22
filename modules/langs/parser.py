@@ -2,6 +2,7 @@
 
 
 import sys
+from .js import Javascript
 from .c import C
 from .python import Python
 from helpers import isfile, getext
