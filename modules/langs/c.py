@@ -3,6 +3,7 @@
 
 import re
 from collections import OrderedDict
+
 from .base import Base
 
 __all__ = ['C']
@@ -114,6 +115,7 @@ class C(Base):
     """
     C language file parser
     """
+
     def __init__(self, fpath, any_ext=False):
         """
         Initializes C object
